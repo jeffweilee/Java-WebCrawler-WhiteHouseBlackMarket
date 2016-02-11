@@ -1,8 +1,9 @@
 # Java-WebCrawler-WhiteHouseBlackMarket
 ## [White House Black Market](http://www.whitehouseblackmarket.com/store/) 
 ## Web Crawler
-	- Using Java to fetch online apparel retailer product detail
-	- library: [Selenium](http://www.seleniumhq.org/)
+	- Using Selenium for Java to fetch online apparel retailer product detail
+
+###[Selenium](http://www.seleniumhq.org/)
 
    
     
