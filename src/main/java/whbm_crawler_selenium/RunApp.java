@@ -5,8 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -17,9 +19,12 @@ import java.util.Date;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -116,7 +121,7 @@ public class RunApp {
 			setUp();
 		} else if (index != -1 && chromeDriver.getCurrentUrl() != productLink.get(index)) {
 			writeLog("Redirect Page " + index + ": " + productLink.get(index));
-			chromeDriver.get(productLink.get(index));
+			// chromeDriver.get(productLink.get(index));
 			wait.until(ExpectedConditions
 					.presenceOfAllElementsLocatedBy(By.cssSelector("#product-options > div:nth-child(2) > select")));
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#skuQty1")));
@@ -130,40 +135,65 @@ public class RunApp {
 	}
 
 	public static void getProductList() {
-
 		List<String> productList = new ArrayList<>();
-		productList.add("http://www.whitehouseblackmarket.com/store/product-list/?No=0&Nrpp=1");
-		// productList.add("http://www.whitehouseblackmarket.com/store/product-list/?No=1000&Nrpp=1");
-
+		// sale
+		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales/");
+		// accessory
+		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
+		// jeans
+		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
+		// jackets
+		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
+		// tops
+		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
+		// skirts
+		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
+		// petities
+		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
+		// work
+		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
+		// new arrival
+		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
+		String msg = "[";
 		for (int i = 0; i < productList.size(); i++) {
+			Boolean flag = true;
+			int count = 0;
 			try {
-				String url = productList.get(i);
-				chromeDriver.get(url);
-				List<WebElement> link = chromeDriver.findElements(By.xpath("//div[@class='product-information']/a[1]"));
-				List<WebElement> id = chromeDriver.findElements(By.xpath("//div[@class='product-information']/a[1]"));
-
-				if (link.size() > 0) {
-					link.forEach(item -> {
-						if (!item.getAttribute("href").contains("EGIFTCERTWH"))
-							productLink.add(item.getAttribute("href"));
-					});
-					id.forEach(item -> {
-						if (!item.getAttribute("href").contains("EGIFTCERTWH"))
-							productStyleid
-									.add(item.getAttribute("onclick").replaceAll("[s_objectID='product__name;]", ""));
-					});
-				} else {
-					clearVar();
-					setUp();
-					i = -1;
+				chromeDriver.get(productList.get(i));
+				int productCountInThePage = Integer.parseInt(chromeDriver
+						.findElement(By.cssSelector("#product-item-count")).getText().replaceAll(" items", ""));
+				while (flag) {
+					((JavascriptExecutor) chromeDriver).executeScript("window.scrollTo(0,document.body.scrollHeight);");
+					waitForPageLoaded(chromeDriver);
+					++count;
+					// 36 items per page
+					if (count >= productCountInThePage / 36) {
+						List<WebElement> backToTop = chromeDriver.findElements(By.cssSelector("#global_backToTop"));
+						if (!backToTop.isEmpty() && backToTop.get(0).getAttribute("style").contains("bottom: 0px")) {
+							flag = false;
+						}
+					}
 				}
+				List<WebElement> link = chromeDriver.findElements(By.cssSelector(".product-name"));
+				link.forEach(item -> {
+					productLink.add(item.getAttribute("href"));
+				});
+				List<WebElement> id = chromeDriver.findElements(By.cssSelector(".product-name"));
+				id.forEach(item -> {
+					productStyleid.add(item.getAttribute("onclick").replaceAll("\\D", ""));
+				});
+				msg += link.size() + ", ";
 			} catch (Exception e) {
-				processException(e, "getProductList", -1);
-				clearVar();
-				i = -1;
+				processException(e, "getDetail", i);
+				i--;
 			}
 		}
-		writeLog("Number of products: " + productLink.size());
+		Set<String> hs = new HashSet<>();
+		hs.addAll(productLink);
+		productLink.clear();
+		productLink.addAll(hs);
+		writeLog("Number of products [sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
+				+ msg.substring(0, msg.length() - 2) + "]");
 	}
 
 	private static void getDetail() {
@@ -176,7 +206,7 @@ public class RunApp {
 				}
 
 				chromeDriver.get(productLink.get(i));
-				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@id='product-style']/span/span[2]"));
+				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
 				List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
 				List<WebElement> regularPrice = chromeDriver.findElements(By.cssSelector(
 						"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.regular-price"));
@@ -184,20 +214,24 @@ public class RunApp {
 						"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.sale-price"));
 				List<WebElement> BVRRRatingNumber = chromeDriver
 						.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/div[3]/span[1]"));
-				List<WebElement> BVRRReviewCount = chromeDriver
-						.findElements(By.xpath("//*[@id='BVRRRatingSummaryLinkReadID']/a/span/span"));
-				if (!id.isEmpty()) {
+				List<WebElement> BVRRReviewCount = chromeDriver.findElements(By.xpath("//*[@id='tab_numReviews']"));
+				if (!id.isEmpty() && !productName.isEmpty() && !regularPrice.isEmpty() && !salesPrice.isEmpty()
+						&& !BVRRReviewCount.isEmpty()) {
 					styleid.add(id.get(0).getText());
 					name.add(productName.get(0).getText());
 					priceNow.add(regularPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
 							.replaceAll("\\s", "").replace("$", ""));
 					priceWas.add(salesPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
 							.replaceAll("\\s", "").replace("$", ""));
-					rating.add(BVRRRatingNumber.get(0).getText());
-					ratingCount.add(BVRRReviewCount.get(0).getText());
+					if (!BVRRRatingNumber.isEmpty())
+						rating.add(BVRRRatingNumber.get(0).getText());
+					else
+						rating.add("0");
+					ratingCount.add(BVRRReviewCount.get(0).getText().replaceAll("\\D", ""));
 					getInventory(i);
 				} else {
-					writeLog("getDetail: page fnd no content");
+					writeLog("getDetail: page find no content or elements; productName:[" + productName.get(i) + "; "
+							+ productLink.get(i));
 					i--;
 				}
 			} catch (Exception e) {
@@ -405,6 +439,17 @@ public class RunApp {
 		priceWas.clear();
 		size.clear();
 		inventory.clear();
+	}
+
+	public static void waitForPageLoaded(WebDriver driver) {
+		ExpectedCondition<Boolean> expectation = new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
+			}
+		};
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(expectation);
 	}
 
 	public static void writeCSV() {
