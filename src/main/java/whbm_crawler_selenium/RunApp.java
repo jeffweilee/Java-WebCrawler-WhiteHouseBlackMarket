@@ -38,16 +38,16 @@ public class RunApp {
 	public static WebDriverWait wait;
 	public static String csvFile = "whbm.csv";
 	public static String logFile = "whbm.log";
+	public static String timeNow = "";
 
 	// original data
 	public static List<String> productLink = new ArrayList<>();
-	public static List<String> productStyleid = new ArrayList<>();
 
 	// storage data
 	public static List<String> styleid = new ArrayList<>();
 	public static List<String> name = new ArrayList<>();
 	public static List<String> rating = new ArrayList<>();
-	public static List<String> ratingCount = new ArrayList<>();
+	public static List<String> reviewCount = new ArrayList<>();
 	public static List<String> priceNow = new ArrayList<>();
 	public static List<String> priceWas = new ArrayList<>();
 	public static List<String> size = new ArrayList<>();
@@ -60,11 +60,12 @@ public class RunApp {
 
 	public static void main(String[] args) {
 		try {
+			timeNow = new Timestamp(new Date().getTime()).toString();
 			logger = Logger.getLogger("whbmLog");
-			fh = new FileHandler(logFile);
-			logger.addHandler(fh);
+			fh = new FileHandler(logFile + "_" + timeNow);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fh.setFormatter(formatter);
+			logger.addHandler(fh);
 
 			setUp();
 			clearVar();
@@ -91,7 +92,7 @@ public class RunApp {
 			}
 			System.setProperty("webdriver.chrome.driver", driverFile.getAbsolutePath());
 			chromeDriver = new ChromeDriver();
-			wait = new WebDriverWait(chromeDriver, 20);
+			wait = new WebDriverWait(chromeDriver, 30);
 			setPage();
 
 		} catch (Exception e) {
@@ -111,26 +112,36 @@ public class RunApp {
 
 	public static void processException(Exception e, String from, int index) {
 		String msg = from + "\n";
-		if (index != -1)
-			msg += "item " + index + ": id(" + productStyleid.get(index) + ")";
+		if (index != -1 && productLink.size() > index)
+			msg += "item " + index + " [" + productLink.get(index) + "]";
 		writeLog(msg);
-		if (e.toString().contains("no such session") || e.toString().contains("chrome not reachable")
-				|| e.toString().contains("no such window") || e.toString().contains("IllegalMonitorState")
-				|| e.toString().contains("crash") || e.toString().contains("died")
-				|| e.toString().contains("renderer")) {
+		e.printStackTrace();
+
+		try {
+			String err = e.toString();
+			if (err.contains("no such session") || err.contains("chrome not reachable")
+					|| err.contains("no such window") || err.contains("IllegalMonitorState") || err.contains("crash")
+					|| err.contains("died") || err.contains("renderer") || err.contains("RetryExec")) {
+				setUp();
+			} else if (e.toString().contains("alert")) {
+				clearAlert();
+			} else if (index != -1 && chromeDriver.getCurrentUrl() != productLink.get(index)) {
+
+				writeLog("Redirect Page " + index + ": " + productLink.get(index));
+				if (from == "fetchClothesLikeProduct" || from == "fetchGadgetLikeProduct") {
+					chromeDriver.get(productLink.get(index));
+					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+							By.cssSelector("#product-options > div:nth-child(2) > select")));
+					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#skuQty1")));
+					sizeSelector = new Select(
+							chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
+					qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
+				}
+			} else {
+				clearPopup();
+			}
+		} catch (Exception e1) {
 			setUp();
-		} else if (index != -1 && chromeDriver.getCurrentUrl() != productLink.get(index)) {
-			writeLog("Redirect Page " + index + ": " + productLink.get(index));
-			// chromeDriver.get(productLink.get(index));
-			wait.until(ExpectedConditions
-					.presenceOfAllElementsLocatedBy(By.cssSelector("#product-options > div:nth-child(2) > select")));
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#skuQty1")));
-			sizeSelector = new Select(
-					chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
-			qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
-		} else {
-			clearPopup();
-			clearAlert();
 		}
 	}
 
@@ -178,13 +189,9 @@ public class RunApp {
 				link.forEach(item -> {
 					productLink.add(item.getAttribute("href"));
 				});
-				List<WebElement> id = chromeDriver.findElements(By.cssSelector(".product-name"));
-				id.forEach(item -> {
-					productStyleid.add(item.getAttribute("onclick").replaceAll("\\D", ""));
-				});
 				msg += link.size() + ", ";
 			} catch (Exception e) {
-				processException(e, "getDetail", i);
+				processException(e, "getProductList", i);
 				i--;
 			}
 		}
@@ -192,20 +199,17 @@ public class RunApp {
 		hs.addAll(productLink);
 		productLink.clear();
 		productLink.addAll(hs);
-		writeLog("Number of products [sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
-				+ msg.substring(0, msg.length() - 2) + "]");
+		hs.clear();
+
+		writeLog("***# of Products: \n***[sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
+				+ msg.substring(0, msg.length() - 2) + "]\n***# of Total Product:" + productLink.size());
 	}
 
 	private static void getDetail() {
 		for (int i = 0; i < productLink.size(); i++) {
 			try {
-				// clear cache and sleep
-				if (i > 0 && i % 100 == 0) {
-					Thread.sleep(10000);
-					setUp();
-				}
-
 				chromeDriver.get(productLink.get(i));
+
 				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
 				List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
 				List<WebElement> regularPrice = chromeDriver.findElements(By.cssSelector(
@@ -215,51 +219,60 @@ public class RunApp {
 				List<WebElement> BVRRRatingNumber = chromeDriver
 						.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/div[3]/span[1]"));
 				List<WebElement> BVRRReviewCount = chromeDriver.findElements(By.xpath("//*[@id='tab_numReviews']"));
-				if (!id.isEmpty() && !productName.isEmpty() && !regularPrice.isEmpty() && !salesPrice.isEmpty()
-						&& !BVRRReviewCount.isEmpty()) {
-					styleid.add(id.get(0).getText());
-					name.add(productName.get(0).getText());
-					priceNow.add(regularPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
-							.replaceAll("\\s", "").replace("$", ""));
-					priceWas.add(salesPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
-							.replaceAll("\\s", "").replace("$", ""));
-					if (!BVRRRatingNumber.isEmpty())
-						rating.add(BVRRRatingNumber.get(0).getText());
-					else
-						rating.add("0");
-					ratingCount.add(BVRRReviewCount.get(0).getText().replaceAll("\\D", ""));
+				Boolean isOutOfStock = false;
+
+				if (!id.isEmpty() && !productName.isEmpty()) {
+
+					isOutOfStock = regularPrice.isEmpty() && salesPrice.isEmpty() ? true : false;
+
+					String idNow = id.get(0).getText();
+					String nameNow = productName.get(0).getText();
+					String rPrice = isOutOfStock == true ? "NA"
+							: regularPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
+									.replaceAll("\\s", "").replace("$", "");
+					String sPrice = isOutOfStock == true ? "NA"
+							: salesPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "").replaceAll("\\s", "")
+									.replace("$", "");
+					String ratingNow = BVRRRatingNumber.isEmpty() == true ? "NA" : BVRRRatingNumber.get(0).getText();
+					String reviewCountNow = BVRRReviewCount.isEmpty() == true ? "NA"
+							: BVRRReviewCount.get(0).getText().replaceAll("\\D", "");
+
+					styleid.add(idNow);
+					name.add(nameNow);
+					priceNow.add(rPrice);
+					priceWas.add(sPrice);
+					rating.add(ratingNow);
+					reviewCount.add(reviewCountNow);
+
 					getInventory(i);
 				} else {
-					writeLog("getDetail: page find no content or elements; productName:[" + productName.get(i) + "; "
-							+ productLink.get(i));
+					writeLog("getDetail: page find no content or elements; " + productLink.get(i));
 					i--;
 				}
 			} catch (Exception e) {
-				processException(e, "getDetail", i);
+				processException(e, "getDetail|getInventory", i);
 				i--;
 			}
 		}
 	}
 
-	public static void getInventory(int i) {
-		try {
-			List<WebElement> sizeSelectorList = chromeDriver
-					.findElements(By.cssSelector("#product-options > div:nth-child(2) > select"));
-			List<WebElement> qtySelectorList = chromeDriver.findElements(By.cssSelector("#skuQty1"));
+	public static Boolean getInventory(int i) {
+		List<WebElement> sizeSelectorList = chromeDriver
+				.findElements(By.cssSelector("#product-options > div:nth-child(2) > select"));
+		List<WebElement> qtySelectorList = chromeDriver.findElements(By.cssSelector("#skuQty1"));
 
-			if (!sizeSelectorList.isEmpty() && !qtySelectorList.isEmpty() && sizeSelectorList.get(0).isDisplayed()
-					&& qtySelectorList.get(0).isDisplayed()) {
-				fetchClothesLikeProduct(i, sizeSelectorList, qtySelectorList);
-			} else if (!qtySelectorList.isEmpty() && qtySelectorList.get(0).isDisplayed()
-					&& !sizeSelectorList.get(0).isDisplayed()) {
-				fetchGadgetLikeProduct(i, qtySelectorList);
-			} else { /*** out of stock ***/
-				inventory.add("0");
-				size.add("NA");
-			}
-		} catch (Exception e) {
-			processException(e, "getInventory", i);
+		if (!sizeSelectorList.isEmpty() && !qtySelectorList.isEmpty() && sizeSelectorList.get(0).isDisplayed()
+				&& qtySelectorList.get(0).isDisplayed()) {
+			fetchClothesLikeProduct(i, sizeSelectorList, qtySelectorList);
+		} else if (!qtySelectorList.isEmpty() && qtySelectorList.get(0).isDisplayed()
+				&& !sizeSelectorList.get(0).isDisplayed()) {
+			fetchGadgetLikeProduct(i, qtySelectorList);
+		} else { /*** out of stock ***/
+			inventory.add("0");
+			size.add("NA");
+			return true;
 		}
+		return false;
 	}
 
 	public static void fetchClothesLikeProduct(int i, List<WebElement> sizeSelectorList,
@@ -280,31 +293,35 @@ public class RunApp {
 		List<String> sizeNow = new ArrayList<String>();
 
 		for (int j = 0; j < sizeList.size(); j++) {
-			String s = sizeList.get(j);
+			try {
+				String s = sizeList.get(j);
+				// refresh page to get correct inventory
+				if (j > 0) {
+					chromeDriver.navigate().refresh();
+					wait.until(ExpectedConditions
+							.presenceOfElementLocated(By.cssSelector("#product-options > div:nth-child(2) > select")));
+					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#skuQty1")));
+					sizeSelector = new Select(
+							chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
+					qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
+				}
 
-			// refresh page to get correct inventory
-			if (j > 0) {
-				chromeDriver.navigate().refresh();
-				wait.until(ExpectedConditions
-						.presenceOfElementLocated(By.cssSelector("#product-options > div:nth-child(2) > select")));
-				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#skuQty1")));
-				sizeSelector = new Select(
-						chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
-				qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
-			}
+				// select size and quantity
+				sizeSelector.selectByVisibleText(s);
+				qtySelector.selectByVisibleText("20");
 
-			// select size and quantity
-			sizeSelector.selectByVisibleText(s);
-			qtySelector.selectByVisibleText("20");
-
-			// get response
-			String submitResult = submitBag(i);
-			if (submitResult == "timeout") {
-				writeLog("timeout item: id(" + productStyleid.get(i) + ") size(" + sizeList.get(j) + ")");
+				// get response
+				String submitResult = submitBag(i);
+				if (submitResult == "timeout") {
+					writeLog("timeout item: id(" + productLink.get(i) + ") size(" + sizeList.get(j) + ")");
+					j--;
+				} else {
+					inventoryNow.add(submitResult);
+					sizeNow.add(s);
+				}
+			} catch (Exception e) {
+				processException(e, "fetchClothesLikeProduct", i);
 				j--;
-			} else {
-				inventoryNow.add(submitResult);
-				sizeNow.add(s);
 			}
 		}
 
@@ -314,6 +331,17 @@ public class RunApp {
 		sizeNow.forEach(item -> {
 			size.add(item);
 		});
+
+		// replicate the record for number of size times
+		for (int j = 0; j < sizeList.size() - 1; j++) {
+			styleid.add(styleid.get(styleid.size() - 1));
+			name.add(name.get(name.size() - 1));
+			rating.add(rating.get(rating.size() - 1));
+			reviewCount.add(reviewCount.get(reviewCount.size() - 1));
+			priceNow.add(priceNow.get(priceNow.size() - 1));
+			priceWas.add(priceWas.get(priceWas.size() - 1));
+		}
+
 	}
 
 	public static void fetchGadgetLikeProduct(int i, List<WebElement> qtySelectorList) {
@@ -322,13 +350,18 @@ public class RunApp {
 		qtySelector.selectByVisibleText("20");
 
 		for (int j = 0; j < 1; j++) {
-			String submitResult = submitBag(i);
-			if (submitResult == "timeout") {
-				writeLog("timeout item: id(" + productStyleid.get(i) + ") size(NA)");
+			try {
+				String submitResult = submitBag(i);
+				if (submitResult == "timeout") {
+					writeLog("timeout item: id(" + productLink.get(i) + ") size(NA)");
+					j--;
+				} else {
+					inventory.add(submitResult);
+					size.add("NA");
+				}
+			} catch (Exception e) {
+				processException(e, "fetchGadgetLikeProduct", i);
 				j--;
-			} else {
-				inventory.add(submitResult);
-				size.add("NA");
 			}
 		}
 	}
@@ -346,6 +379,8 @@ public class RunApp {
 			// check if exists inventory message
 			Pattern selloutPtn = Pattern.compile("Only \\((?<leftAmt>\\d+)\\) left");
 			List<WebElement> sellOutDivs = chromeDriver.findElements(By.cssSelector("#zone-error"));
+			Boolean p = sellOutDivs.get(0).isDisplayed();
+			String q = sellOutDivs.get(0).getText();
 			if (!sellOutDivs.isEmpty() && sellOutDivs.get(0).isDisplayed()) {
 				String selloutText = sellOutDivs.get(0).getText();
 				Matcher matcher = selloutPtn.matcher(selloutText);
@@ -397,7 +432,7 @@ public class RunApp {
 		wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
 		Actions actions_submitBtn = new Actions(chromeDriver);
 		actions_submitBtn.moveToElement(submitBtn).click().perform();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modalWindow")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jqmID13")));
 	}
 
 	public static void clearPopup() {
@@ -429,12 +464,11 @@ public class RunApp {
 	}
 
 	public static void clearVar() {
-		productStyleid.clear();
 		productLink.clear();
 		styleid.clear();
 		name.clear();
 		rating.clear();
-		ratingCount.clear();
+		reviewCount.clear();
 		priceNow.clear();
 		priceWas.clear();
 		size.clear();
@@ -453,7 +487,6 @@ public class RunApp {
 	}
 
 	public static void writeCSV() {
-		String timeNow = new Timestamp(new Date().getTime()).toString();
 		boolean alreadyExists = new File(csvFile).exists();
 		try {
 			CsvWriter csvOutput = new CsvWriter(new FileWriter(csvFile, true), ',');
@@ -470,7 +503,7 @@ public class RunApp {
 				csvOutput.write(styleid.get(i));
 				csvOutput.write(name.get(i));
 				csvOutput.write(rating.get(i));
-				csvOutput.write(ratingCount.get(i));
+				csvOutput.write(reviewCount.get(i));
 				csvOutput.write(priceNow.get(i));
 				csvOutput.write(priceWas.get(i));
 				csvOutput.write(size.get(i));
@@ -509,14 +542,14 @@ public class RunApp {
 				csvOutput.write(styleid.get(i));
 				csvOutput.write(name.get(i));
 				csvOutput.write(rating.get(i));
-				csvOutput.write(ratingCount.get(i));
+				csvOutput.write(reviewCount.get(i));
 				csvOutput.write(priceNow.get(i));
 				csvOutput.write(priceWas.get(i));
 				csvOutput.write(size.get(i));
 				csvOutput.write(inventory.get(i));
 				csvOutput.endRecord();
 			}
-			writeLog(timeNow + " successfully write temp " + styleid.size() + " products (" + styleid.size()
+			writeLog("***Successfully write temp " + productLink.size() + " products (" + styleid.size()
 					+ " records) to " + csvFile + "\n\n");
 			csvOutput.close();
 		} catch (IOException e) {
