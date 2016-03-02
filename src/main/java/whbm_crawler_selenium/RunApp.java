@@ -14,8 +14,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -58,15 +56,16 @@ public class RunApp {
 	public static Logger logger;
 	public static FileHandler fh;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		try {
-			timeNow = new Timestamp(new Date().getTime()).toString();
+			// log
 			logger = Logger.getLogger("whbmLog");
-			fh = new FileHandler(logFile + "_" + timeNow);
+			logger.setUseParentHandlers(false);
+			fh = new FileHandler(logFile, true);
+			logger.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fh.setFormatter(formatter);
-			logger.addHandler(fh);
-
+			// start
 			setUp();
 			clearVar();
 			getProductList();
@@ -82,19 +81,8 @@ public class RunApp {
 	public static void setUp() {
 		try {
 			String OS = System.getProperty("os.name").toLowerCase();
-
-			if (chromeDriver != null)
-				chromeDriver.quit();
-			if (OS.indexOf("win") >= 0) {
-				driverFile = new File("driver/chromedriver_win.exe");
-			} else if (OS.indexOf("mac") >= 0) {
-				driverFile = new File("driver/chromedriver_mac");
-			}
-			System.setProperty("webdriver.chrome.driver", driverFile.getAbsolutePath());
-			chromeDriver = new ChromeDriver();
-			wait = new WebDriverWait(chromeDriver, 30);
+			setDriver(OS);
 			setPage();
-
 		} catch (Exception e) {
 			if (e.toString().contains("not exist")) {
 				writeLog(e.getMessage());
@@ -110,10 +98,33 @@ public class RunApp {
 		changeCurrency("USD");
 	}
 
+	public static void setDriver(String OS) {
+		if (chromeDriver != null)
+			chromeDriver.quit();
+		if (OS.indexOf("win") >= 0) {
+			driverFile = new File("driver/chromedriver_win.exe");
+		} else if (OS.indexOf("mac") >= 0) {
+			driverFile = new File("driver/chromedriver_mac");
+		}
+
+		if (driverFile.exists()) {
+			System.setProperty("webdriver.chrome.driver", driverFile.getAbsolutePath());
+		} else {
+			writeLog("ChromeDriver not found! Origin path: " + driverFile.getPath());
+		}
+
+		chromeDriver = new ChromeDriver();
+		wait = new WebDriverWait(chromeDriver, 30);
+	}
+
 	public static void processException(Exception e, String from, int index) {
-		String msg = from + "\n";
-		if (index != -1 && productLink.size() > index)
-			msg += "item " + index + " [" + productLink.get(index) + "]";
+		String msg = from + ": ";
+		if (index != -1 && productLink.size() > index) {
+			if (from != "GetProductList")
+				msg += "Item " + index + " [" + productLink.get(index) + "]";
+			else if (from != "GetProductList")
+				msg += "Catgory " + index + ": " + " [" + chromeDriver.getCurrentUrl() + "]";
+		}
 		writeLog(msg);
 		e.printStackTrace();
 
@@ -125,10 +136,10 @@ public class RunApp {
 				setUp();
 			} else if (e.toString().contains("alert")) {
 				clearAlert();
-			} else if (index != -1 && chromeDriver.getCurrentUrl() != productLink.get(index)) {
-
+			} else if (index != -1 && chromeDriver.getCurrentUrl() != productLink.get(index)
+					|| e.toString().contains("locate element")) {
 				writeLog("Redirect Page " + index + ": " + productLink.get(index));
-				if (from == "fetchClothesLikeProduct" || from == "fetchGadgetLikeProduct") {
+				if (from == "FetchClothesLikeProduct" || from.toLowerCase() == "FetchGadgetLikeProduct") {
 					chromeDriver.get(productLink.get(index));
 					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 							By.cssSelector("#product-options > div:nth-child(2) > select")));
@@ -148,7 +159,7 @@ public class RunApp {
 	public static void getProductList() {
 		List<String> productList = new ArrayList<>();
 		// sale
-		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales/");
+		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales");
 		// accessory
 		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
 		// jeans
@@ -165,25 +176,20 @@ public class RunApp {
 		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
 		// new arrival
 		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
+
+		writeLog("Start crawling...");
 		String msg = "[";
+
 		for (int i = 0; i < productList.size(); i++) {
-			Boolean flag = true;
-			int count = 0;
 			try {
 				chromeDriver.get(productList.get(i));
-				int productCountInThePage = Integer.parseInt(chromeDriver
-						.findElement(By.cssSelector("#product-item-count")).getText().replaceAll(" items", ""));
-				while (flag) {
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#product-item-count")));
+				int NumOfProdNow = Integer.parseInt(chromeDriver.findElement(By.cssSelector("#product-item-count"))
+						.getText().replaceAll("\\D", ""));
+				while (true) {
 					((JavascriptExecutor) chromeDriver).executeScript("window.scrollTo(0,document.body.scrollHeight);");
-					waitForPageLoaded(chromeDriver);
-					++count;
-					// 36 items per page
-					if (count >= productCountInThePage / 36) {
-						List<WebElement> backToTop = chromeDriver.findElements(By.cssSelector("#global_backToTop"));
-						if (!backToTop.isEmpty() && backToTop.get(0).getAttribute("style").contains("bottom: 0px")) {
-							flag = false;
-						}
-					}
+					if (!chromeDriver.findElements(By.cssSelector("#pc" + NumOfProdNow)).isEmpty())
+						break;
 				}
 				List<WebElement> link = chromeDriver.findElements(By.cssSelector(".product-name"));
 				link.forEach(item -> {
@@ -191,7 +197,8 @@ public class RunApp {
 				});
 				msg += link.size() + ", ";
 			} catch (Exception e) {
-				processException(e, "getProductList", i);
+				processException(e, "GetProductList", i);
+				writeLog("GetProductList: " + productList.get(i));
 				i--;
 			}
 		}
@@ -201,8 +208,14 @@ public class RunApp {
 		productLink.addAll(hs);
 		hs.clear();
 
-		writeLog("***# of Products: \n***[sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
-				+ msg.substring(0, msg.length() - 2) + "]\n***# of Total Product:" + productLink.size());
+		try {
+			writeLog("# of Products: [sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
+					+ msg.substring(0, msg.length() - 2) + "]");
+			writeLog("# of Total Product:" + productLink.size());
+		} catch (Exception e) {
+			processException(e, "GetProductList", -1);
+			getProductList();
+		}
 	}
 
 	private static void getDetail() {
@@ -210,6 +223,7 @@ public class RunApp {
 			try {
 				chromeDriver.get(productLink.get(i));
 
+				checkCurrency("USD");
 				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
 				List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
 				List<WebElement> regularPrice = chromeDriver.findElements(By.cssSelector(
@@ -246,11 +260,11 @@ public class RunApp {
 
 					getInventory(i);
 				} else {
-					writeLog("getDetail: page find no content or elements; " + productLink.get(i));
+					writeLog("GetDetail: page find no content or elements; " + productLink.get(i));
 					i--;
 				}
 			} catch (Exception e) {
-				processException(e, "getDetail|getInventory", i);
+				processException(e, "GetDetail|GetInventory", i);
 				i--;
 			}
 		}
@@ -320,7 +334,7 @@ public class RunApp {
 					sizeNow.add(s);
 				}
 			} catch (Exception e) {
-				processException(e, "fetchClothesLikeProduct", i);
+				processException(e, "FetchClothesLikeProduct", i);
 				j--;
 			}
 		}
@@ -360,7 +374,7 @@ public class RunApp {
 					size.add("NA");
 				}
 			} catch (Exception e) {
-				processException(e, "fetchGadgetLikeProduct", i);
+				processException(e, "FetchGadgetLikeProduct", i);
 				j--;
 			}
 		}
@@ -379,8 +393,6 @@ public class RunApp {
 			// check if exists inventory message
 			Pattern selloutPtn = Pattern.compile("Only \\((?<leftAmt>\\d+)\\) left");
 			List<WebElement> sellOutDivs = chromeDriver.findElements(By.cssSelector("#zone-error"));
-			Boolean p = sellOutDivs.get(0).isDisplayed();
-			String q = sellOutDivs.get(0).getText();
 			if (!sellOutDivs.isEmpty() && sellOutDivs.get(0).isDisplayed()) {
 				String selloutText = sellOutDivs.get(0).getText();
 				Matcher matcher = selloutPtn.matcher(selloutText);
@@ -390,7 +402,7 @@ public class RunApp {
 			}
 			// Thread.sleep(1500);
 		} catch (Exception e) {
-			processException(e, "submitBag", index);
+			processException(e, "SubmitBag", index);
 			return "timeout";
 		}
 		return left;
@@ -435,6 +447,31 @@ public class RunApp {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jqmID13")));
 	}
 
+	public static void checkCurrency(String currency) {
+		List<WebElement> reg = chromeDriver.findElements(By.cssSelector(
+				"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.regular-price"));
+		List<WebElement> sal = chromeDriver.findElements(By.cssSelector(
+				"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.sale-price"));
+		Boolean flag = false;
+		if (!reg.isEmpty()) {
+			if (reg.get(0).getText().contains("TWD")) {
+				flag = true;
+			}
+		} else if (!sal.isEmpty()) {
+			if (reg.get(0).getText().contains("TWD")) {
+				flag = true;
+			}
+		}
+		if (flag) {
+			clearPopup();
+			WebElement countryBtn = chromeDriver.findElement(By.cssSelector("#ibf-countryName"));
+			Actions actions_submitBtn = new Actions(chromeDriver);
+			wait.until(ExpectedConditions.elementToBeClickable(countryBtn));
+			actions_submitBtn.moveToElement(countryBtn).click().perform();
+			changeCurrency(currency);
+		}
+	}
+
 	public static void clearPopup() {
 		List<WebElement> closePopupBtn_shippment = chromeDriver.findElements(By.cssSelector("#closeButton"));
 		if (!closePopupBtn_shippment.isEmpty()) {
@@ -449,6 +486,7 @@ public class RunApp {
 			Actions action_closePopupBtn_giftCard = new Actions(chromeDriver);
 			action_closePopupBtn_giftCard.moveToElement(closePopupBtn_giftCard.get(0)).click().perform();
 		}
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#tinymask")));
 	}
 
 	public static void clearAlert() {
@@ -473,17 +511,6 @@ public class RunApp {
 		priceWas.clear();
 		size.clear();
 		inventory.clear();
-	}
-
-	public static void waitForPageLoaded(WebDriver driver) {
-		ExpectedCondition<Boolean> expectation = new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
-			}
-		};
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(expectation);
 	}
 
 	public static void writeCSV() {
@@ -549,8 +576,8 @@ public class RunApp {
 				csvOutput.write(inventory.get(i));
 				csvOutput.endRecord();
 			}
-			writeLog("***Successfully write temp " + productLink.size() + " products (" + styleid.size()
-					+ " records) to " + csvFile + "\n\n");
+			writeLog("Successfully write temp " + productLink.size() + " products (" + styleid.size() + " records) to "
+					+ csvFile);
 			csvOutput.close();
 		} catch (IOException e) {
 			writeLog(e.getMessage());
@@ -561,7 +588,7 @@ public class RunApp {
 		// System.out.println("\n\n " + new Timestamp(new
 		// Date().getTime()).toString() + " - " + msg);
 		try {
-			logger.info(msg);
+			logger.info("======" + msg + "======");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

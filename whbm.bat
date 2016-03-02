@@ -1,1 +1,0 @@
-java -jar WHBM_Crawler.jar
