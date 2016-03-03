@@ -3,10 +3,12 @@ package whbm_crawler_selenium;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
@@ -18,11 +20,9 @@ import java.util.regex.Pattern;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -62,9 +62,11 @@ public class RunApp {
 			logger = Logger.getLogger("whbmLog");
 			logger.setUseParentHandlers(false);
 			fh = new FileHandler(logFile, true);
-			logger.addHandler(fh);
+			Locale.setDefault(Locale.ENGLISH);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fh.setFormatter(formatter);
+			logger.addHandler(fh);
+			timeNow = LocalDateTime.now().toString();
 			// start
 			setUp();
 			clearVar();
@@ -118,18 +120,18 @@ public class RunApp {
 	}
 
 	public static void processException(Exception e, String from, int index) {
-		String msg = from + ": ";
-		if (index != -1 && productLink.size() > index) {
-			if (from != "GetProductList")
-				msg += "Item " + index + " [" + productLink.get(index) + "]";
-			else if (from != "GetProductList")
-				msg += "Catgory " + index + ": " + " [" + chromeDriver.getCurrentUrl() + "]";
-		}
-		writeLog(msg);
 		e.printStackTrace();
-
+		String err = e.toString();
+		String msg = from + ": ";
 		try {
-			String err = e.toString();
+			if (index != -1 && productLink.size() > index) {
+				if (from != "GetProductList")
+					msg += "Item " + index + " [" + productLink.get(index) + "]";
+				else if (from != "GetProductList")
+					msg += "Category " + index + ": " + " [" + chromeDriver.getCurrentUrl() + "]";
+			}
+			writeLog(msg);
+			writeLog(err);
 			if (err.contains("no such session") || err.contains("chrome not reachable")
 					|| err.contains("no such window") || err.contains("IllegalMonitorState") || err.contains("crash")
 					|| err.contains("died") || err.contains("renderer") || err.contains("RetryExec")) {
@@ -157,6 +159,7 @@ public class RunApp {
 	}
 
 	public static void getProductList() {
+		writeLog("Start crawling...");
 		List<String> productList = new ArrayList<>();
 		// sale
 		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales");
@@ -177,9 +180,7 @@ public class RunApp {
 		// new arrival
 		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
 
-		writeLog("Start crawling...");
 		String msg = "[";
-
 		for (int i = 0; i < productList.size(); i++) {
 			try {
 				chromeDriver.get(productList.get(i));
@@ -210,7 +211,7 @@ public class RunApp {
 
 		try {
 			writeLog("# of Products: [sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: "
-					+ msg.substring(0, msg.length() - 2) + "]");
+					+ msg.trim().substring(0, msg.length() - 2) + "]");
 			writeLog("# of Total Product:" + productLink.size());
 		} catch (Exception e) {
 			processException(e, "GetProductList", -1);
@@ -219,10 +220,12 @@ public class RunApp {
 	}
 
 	private static void getDetail() {
+		writeLog("Start getDetail...");
 		for (int i = 0; i < productLink.size(); i++) {
 			try {
+				if (i % 100 == 0)
+					writeLog("No. " + i + " item completed!");
 				chromeDriver.get(productLink.get(i));
-
 				checkCurrency("USD");
 				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
 				List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
@@ -244,7 +247,7 @@ public class RunApp {
 					String rPrice = isOutOfStock == true ? "NA"
 							: regularPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
 									.replaceAll("\\s", "").replace("$", "");
-					String sPrice = isOutOfStock == true ? "NA"
+					String sPrice = isOutOfStock == true || salesPrice.get(0).getText().trim().isEmpty() ? "NA"
 							: salesPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "").replaceAll("\\s", "")
 									.replace("$", "");
 					String ratingNow = BVRRRatingNumber.isEmpty() == true ? "NA" : BVRRRatingNumber.get(0).getText();
@@ -585,8 +588,6 @@ public class RunApp {
 	}
 
 	private static void writeLog(String msg) {
-		// System.out.println("\n\n " + new Timestamp(new
-		// Date().getTime()).toString() + " - " + msg);
 		try {
 			logger.info("======" + msg + "======");
 		} catch (Exception e) {
