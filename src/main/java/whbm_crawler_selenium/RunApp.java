@@ -413,12 +413,8 @@ public class RunApp {
 			// check if exists inventory message
 			Pattern selloutPtn = Pattern.compile("Only \\((?<leftAmt>\\d+)\\) left");
 			List<WebElement> sellOutDivs = chromeDriver.findElements(By.cssSelector("#zone-error"));
-			System.out.println(!sellOutDivs.isEmpty());
-			System.out.println(sellOutDivs.size());
 			if (!sellOutDivs.isEmpty()) {
 				String selloutText = sellOutDivs.get(0).getText();
-
-				System.out.println(selloutText);
 				Matcher matcher = selloutPtn.matcher(selloutText);
 				if (matcher.find()) {
 					left = matcher.group("leftAmt");
