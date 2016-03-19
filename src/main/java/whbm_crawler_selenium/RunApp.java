@@ -34,6 +34,7 @@ public class RunApp {
 	public static ChromeDriver chromeDriver;
 	public static WebDriverWait wait;
 	public static String csvFile = "whbm.csv";
+	public static String csvFileIndi;
 	public static String logFile = "whbm.log";
 	public static String newline = "\n";
 	public static String seperator = "\n====================";
@@ -57,6 +58,10 @@ public class RunApp {
 	public static Logger logger;
 	public static FileHandler fh;
 
+	RunApp() {
+		csvFileIndi = "";
+	};
+
 	public static void main(String[] args) throws InterruptedException {
 		try {
 			// log
@@ -68,6 +73,7 @@ public class RunApp {
 			fh.setFormatter(formatter);
 			logger.addHandler(fh);
 			timeNow = LocalDateTime.now().toString();
+			csvFileIndi = "whbm" + timeNow + ".csv";
 			// start
 			setUp();
 			clearVar();
@@ -300,26 +306,21 @@ public class RunApp {
 				inventory.add("0");
 				size.add("NA");
 			}
-
 		}
 	}
 
 	public static void fetchClothesLikeProduct(int i) {
+		List<String> inventoryNow = new ArrayList<String>();
+		List<String> sizeNow = new ArrayList<String>();
 		List<String> sizeList = new ArrayList<String>();
-
 		sizeSelector = new Select(
 				chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
-		qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
-
 		sizeSelector.getOptions().forEach(item -> {
 			sizeList.add(item.getText());
 		});
 		if (sizeList.get(0).contains("Select"))
 			sizeList.remove(0);
 		int sl = sizeList.size();
-		// get inventory of each size
-		List<String> inventoryNow = new ArrayList<String>();
-		List<String> sizeNow = new ArrayList<String>();
 
 		for (int j = 0; j < sizeList.size(); j++) {
 			try {
@@ -328,22 +329,19 @@ public class RunApp {
 				else {
 					checkCurrency("USD");
 					String s = sizeList.get(j);
-					// refresh page to get correct inventory
-					if (j > 0) {
-						chromeDriver.navigate().refresh();
-						wait.until(ExpectedConditions.presenceOfElementLocated(
-								By.cssSelector("#product-options > div:nth-child(2) > select")));
-						wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#skuQty1")));
-						sizeSelector = new Select(chromeDriver
-								.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
-						qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
-					}
 
-					// select size and quantity
-					if (!sizeSelector.getOptions().contains(s)) {
-						--sl;
-						continue;
-					}
+					// refresh page to get correct inventory without #zone-error
+					if (!inventoryNow.isEmpty() && !inventoryNow.get(j - 1).equals("20+"))
+						chromeDriver.navigate().refresh();
+
+					wait.until(ExpectedConditions
+							.presenceOfElementLocated(By.cssSelector("#product-options > div:nth-child(2) > select")));
+					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#skuQty1")));
+
+					sizeSelector = new Select(
+							chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
+					qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
+
 					sizeSelector.selectByVisibleText(s);
 					qtySelector.selectByVisibleText("20");
 
@@ -416,6 +414,7 @@ public class RunApp {
 		try {
 			WebElement submitBagBtn = chromeDriver.findElement(By.cssSelector("#add-to-bag"));
 			wait.until(ExpectedConditions.elementToBeClickable(submitBagBtn));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jqmOverlay")));
 			submitBagBtn.click();
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#pc-overflow")));
 			Thread.sleep(1500);
@@ -510,7 +509,8 @@ public class RunApp {
 	public static Boolean checkProductUrl(int i) {
 		if (!chromeDriver.getCurrentUrl().trim().equals(productLink.get(i).trim())) {
 			chromeDriver.get(productLink.get(i));
-			logger.info("URL error!\nCurrent:" + chromeDriver.getCurrentUrl() + "\nExpected:" + productLink.get(i));
+			logger.info("URL error!\nCurrent: " + chromeDriver.getCurrentUrl() + "\nExpect:" + productLink.get(i)
+					+ seperator);
 			return false;
 		}
 		return true;
@@ -580,7 +580,7 @@ public class RunApp {
 				csvOutput.endRecord();
 			}
 			logger.info("Successfully write (from " + timeNow + ") " + productLink.size() + " items (" + styleid.size()
-					+ " records) to " + csvFile + "\n\n" + seperator);
+					+ " records) to " + csvFile + "\n" + seperator + seperator + seperator);
 			csvOutput.close();
 		} catch (IOException e) {
 			// e.printStackTrace();
@@ -618,8 +618,8 @@ public class RunApp {
 				csvOutput.write(inventory.get(i));
 				csvOutput.endRecord();
 			}
-			logger.info("Successfully write temp " + productLink.size() + " items (" + styleid.size() + " records) to "
-					+ csvFile + "\n\n" + seperator);
+			logger.info("Successfully write temp file (from " + timeNow + ") " + productLink.size() + " items ("
+					+ styleid.size() + " records) to " + csvFile + "\n\n" + seperator + seperator + seperator);
 			csvOutput.close();
 		} catch (IOException e) {
 			logger.info(e.getMessage() + seperator);
