@@ -34,7 +34,8 @@ public class RunApp {
 	public static ChromeDriver chromeDriver;
 	public static WebDriverWait wait;
 	public static String csvFile = "whbm.csv";
-	public static String csvFileIndi;
+	public static String csvFileIndi = "";
+	public static String csvFile_backup = "whbm_backup.csv";
 	public static String logFile = "whbm.log";
 	public static String newline = "\n";
 	public static String seperator = "\n====================";
@@ -79,7 +80,7 @@ public class RunApp {
 			clearVar();
 			getProductList();
 			getDetail();
-			writeCSV();
+			writeCSV(-1, -1);
 			if (chromeDriver != null)
 				chromeDriver.quit();
 		} catch (Exception e) {
@@ -125,7 +126,7 @@ public class RunApp {
 		}
 
 		chromeDriver = new ChromeDriver();
-		wait = new WebDriverWait(chromeDriver, 30);
+		wait = new WebDriverWait(chromeDriver, 20);
 	}
 
 	public static void processException(Exception e, String from, int index) {
@@ -140,22 +141,31 @@ public class RunApp {
 				else
 					msg += "Item " + index + "\n[" + productLink.get(index) + "]";
 			}
-			logger.info(msg + newline);
-			logger.info(err + seperator);
-
 			if (err.contains("UnreachableBrowserException") || err.contains("SessionNotFoundException")
 					|| err.contains("UnhandledAlertException") || err.contains("no such session")
 					|| err.contains("chrome not reachable") || err.contains("no such window") || err.contains("crash")
 					|| err.contains("died") || err.contains("renderer") || err.contains("SessionNotFoundException")
 					|| err.contains("IllegalMonitorState") || err.contains("RetryExec")) {
+				logger.info(msg + newline);
+				logger.info(err + seperator);
 				setUp();
 			} else if (err.contains("NoSuchElementException")) {
+				logger.info(msg + newline);
+				logger.info(err + seperator);
 				clearAlert();
 			} else if (err.contains("alert")) {
+				logger.info(msg + newline);
+				logger.info(err + seperator);
 				clearAlert();
 			} else if (index != -1 && !chromeDriver.getCurrentUrl().equals(productLink.get(index))
 					|| err.contains("TimeoutException")) {
-				logger.info("Redirect Page " + index + ": " + productLink.get(index) + seperator);
+				if (from.equals("SubmitBag")) {
+					logger.info("Redirect Page " + index + ": " + productLink.get(index) + " because ");
+				} else {
+					logger.info(msg + newline);
+					logger.info(err + newline);
+					logger.info("Redirect Page " + index + ": " + productLink.get(index) + seperator);
+				}
 				if (from == "GetInventory" || from == "FetchClothesLikeProduct" || from == "FetchGadgetLikeProduct") {
 					chromeDriver.get(productLink.get(index));
 					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
@@ -168,9 +178,14 @@ public class RunApp {
 			} else {
 				clearPopup();
 			}
-		} catch (Exception e1) {
+		} catch (
+
+		Exception e1)
+
+		{
 			setUp();
 		}
+
 	}
 
 	public static void getProductList() {
@@ -203,7 +218,7 @@ public class RunApp {
 				}
 				List<WebElement> link = chromeDriver.findElements(By.cssSelector(".product-name"));
 				link.forEach(item -> {
-					productLink.add(item.getAttribute("href"));
+					productLink.add(item.getAttribute("href").trim().replaceAll(" *", ""));
 				});
 				msg += link.size() + ", ";
 			} catch (Exception e) {
@@ -220,7 +235,7 @@ public class RunApp {
 
 		try {
 			logger.info("# of Items:" + newline
-					+ " [sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: " + newline
+					+ "[sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: " + newline
 					+ msg.trim().substring(0, msg.length() - 2) + "]" + seperator);
 			logger.info("# of Total Items: " + productLink.size() + seperator);
 		} catch (Exception e) {
@@ -231,59 +246,75 @@ public class RunApp {
 
 	private static void getDetail() {
 		logger.info("Start getDetail..." + seperator);
-		for (int i = 0; i < productLink.size(); i++) {
+		Boolean flagRerun = false;
+		int writeFreq = 20;
+		int lastWriteIndex = 0;
+		for (int i = 0; i <= productLink.size(); i++) {
 			try {
+				if ((i % writeFreq == 0 && i != 0 || i == productLink.size()) && !flagRerun) {
+					writeCSV(lastWriteIndex, styleid.size());
+					lastWriteIndex = styleid.size();
+					String sMsg = (i == productLink.size() - 1) ? "" : String.valueOf(i - writeFreq);
+					logger.info("No. " + sMsg + " - " + (i - 1) + " item wrtite to " + csvFile + " successfully!"
+							+ seperator);
+					setPage();
+				}
 				if (i % 100 == 1)
 					logger.info("No. " + (i - 1) + " item completed!" + newline + " [" + productLink.get(i - 1) + "]"
 							+ seperator);
-
-				chromeDriver.get(productLink.get(i));
-				checkCurrency("USD");
-				List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
-				List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
-				List<WebElement> regPrice = chromeDriver.findElements(By.cssSelector(
-						"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.regular-price"));
-				List<WebElement> salPrice = chromeDriver.findElements(By.cssSelector(
-						"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.sale-price"));
-				List<WebElement> BVRRRatingNumber = chromeDriver
-						.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/div[3]/span[1]"));
-				List<WebElement> BVRRReviewCount = chromeDriver.findElements(By.xpath("//*[@id='tab_numReviews']"));
-				Boolean isOutOfStock = false;
-				if (!checkProductUrl(i))
-					i--;
-				else {
-					if (!id.isEmpty() && !productName.isEmpty()) {
-
-						isOutOfStock = regPrice.isEmpty() && salPrice.isEmpty() ? true : false;
-
-						String idNow = id.get(0).getText();
-						String nameNow = productName.get(0).getText();
-						String rPrice = isOutOfStock == true ? "NA"
-								: regPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
-										.replaceAll("\\s", "").replace("$", "");
-						String sPrice = isOutOfStock == true || salPrice.get(0).getText().trim().isEmpty() ? "NA"
-								: salPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
-										.replaceAll("\\s", "").replace("$", "");
-						String ratingNow = BVRRRatingNumber.isEmpty() == true ? "NA"
-								: BVRRRatingNumber.get(0).getText();
-						String reviewCountNow = BVRRReviewCount.isEmpty() == true ? "NA"
-								: BVRRReviewCount.get(0).getText().replaceAll("\\D", "");
-
-						styleid.add(idNow);
-						name.add(nameNow);
-						regularPrice.add(rPrice);
-						salesPrice.add(sPrice);
-						rating.add(ratingNow);
-						reviewCount.add(reviewCountNow);
-
-						getInventory(i);
-					} else {
-						logger.info("GetDetail: page find no content or elements; " + productLink.get(i) + seperator);
+				if (i < productLink.size()) {
+					flagRerun = true;
+					chromeDriver.get(productLink.get(i));
+					checkCurrency("USD");
+					List<WebElement> id = chromeDriver.findElements(By.xpath("//*[@class='style-id-number']"));
+					List<WebElement> productName = chromeDriver.findElements(By.cssSelector("#product-name"));
+					List<WebElement> regPrice = chromeDriver.findElements(By.cssSelector(
+							"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.regular-price"));
+					List<WebElement> salPrice = chromeDriver.findElements(By.cssSelector(
+							"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.sale-price"));
+					List<WebElement> BVRRRatingNumber = chromeDriver
+							.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/div[3]/span[1]"));
+					List<WebElement> BVRRReviewCount = chromeDriver.findElements(By.xpath("//*[@id='tab_numReviews']"));
+					Boolean isOutOfStock = false;
+					if (!checkProductUrl(i))
 						i--;
+					else {
+						if (!id.isEmpty() && !productName.isEmpty()) {
+							flagRerun = false;
+							isOutOfStock = regPrice.isEmpty() && salPrice.isEmpty() ? true : false;
+
+							String idNow = id.get(0).getText();
+							String nameNow = productName.get(0).getText();
+							String rPrice = isOutOfStock == true ? "NA"
+									: regPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
+											.replaceAll("\\s", "").replace("$", "");
+							String sPrice = isOutOfStock == true || salPrice.get(0).getText().trim().isEmpty() ? "NA"
+									: salPrice.get(0).getText().replaceAll("[^\\d+\\.?[\\,]\\d*$]", "")
+											.replaceAll("\\s", "").replace("$", "");
+							String ratingNow = BVRRRatingNumber.isEmpty() == true ? "NA"
+									: BVRRRatingNumber.get(0).getText();
+							String reviewCountNow = BVRRReviewCount.isEmpty() == true ? "NA"
+									: BVRRReviewCount.get(0).getText().replaceAll("\\D", "");
+
+							styleid.add(idNow);
+							name.add(nameNow);
+							regularPrice.add(rPrice);
+							salesPrice.add(sPrice);
+							rating.add(ratingNow);
+							reviewCount.add(reviewCountNow);
+
+							getInventory(i);
+						} else {
+							logger.info(
+									"GetDetail: page find no content or elements; " + productLink.get(i) + seperator);
+							flagRerun = true;
+							i--;
+						}
 					}
 				}
 			} catch (Exception e) {
 				processException(e, "GetDetail", i);
+				flagRerun = true;
 				i--;
 			}
 		}
@@ -348,7 +379,7 @@ public class RunApp {
 					// get response
 					String submitResult = submitBag(i);
 					if (submitResult == "timeout") {
-						logger.info("timeout item: id(" + productLink.get(i) + ") size(" + sizeList.get(j) + ")"
+						logger.info("Timeout item " + i + " size(" + sizeList.get(j) + ")\n" + productLink.get(i)
 								+ seperator);
 						j--;
 					} else {
@@ -509,8 +540,8 @@ public class RunApp {
 	public static Boolean checkProductUrl(int i) {
 		if (!chromeDriver.getCurrentUrl().trim().equals(productLink.get(i).trim())) {
 			chromeDriver.get(productLink.get(i));
-			logger.info("URL error!\nCurrent: " + chromeDriver.getCurrentUrl() + "\nExpect:" + productLink.get(i)
-					+ seperator);
+			logger.info("URL error!\nCurrent: " + chromeDriver.getCurrentUrl().trim() + "\nExpect : "
+					+ productLink.get(i) + seperator);
 			return false;
 		}
 		return true;
@@ -555,19 +586,25 @@ public class RunApp {
 		inventory.clear();
 	}
 
-	public static void writeCSV() {
-		boolean alreadyExists = new File(csvFile).exists();
+	public static void writeCSV(int s, int e) {
+		boolean alreadyExists;
+		CsvWriter csvOutput;
+
+		int sInd = (s == -1 && e == -1) ? 0 : s;
+		int eInd = (s == -1 && e == -1) ? styleid.size() : e;
+		String wf = (s == -1 && e == -1) ? csvFile_backup : csvFile;
+
 		try {
-			CsvWriter csvOutput = new CsvWriter(new FileWriter(csvFile, true), ',');
+			alreadyExists = new File(wf).exists();
+			csvOutput = new CsvWriter(new FileWriter(wf, true), ',');
 
 			// write header
-			if (!alreadyExists) {
+			if (!alreadyExists)
 				csvOutput.writeRecord(new String[] { "timeStamp", "styleid", "name", "rating", "reviewCount",
 						"priceNow", "priceWas", "size", "inventory" });
-			}
 
 			// write records
-			for (int i = 0; i < styleid.size(); i++) {
+			for (int i = sInd; i < eInd; i++) {
 				csvOutput.write(timeNow);
 				csvOutput.write(styleid.get(i));
 				csvOutput.write(name.get(i));
@@ -579,59 +616,46 @@ public class RunApp {
 				csvOutput.write(inventory.get(i));
 				csvOutput.endRecord();
 			}
-			logger.info("Successfully write (from " + timeNow + ") " + productLink.size() + " items (" + styleid.size()
-					+ " records) to " + csvFile + "\n" + seperator + seperator + seperator);
+
 			csvOutput.close();
-		} catch (IOException e) {
+
+			if (s == -1 && e == -1)
+				logger.info("Successfully write (from " + timeNow + ") " + productLink.size() + " items ("
+						+ styleid.size() + " records) to " + csvFile + seperator + seperator + seperator
+						+ seperator + seperator + seperator);
+
+		} catch (IOException x) {
 			// e.printStackTrace();
-			logger.info("csvFile in use. Save to " + "whbm_" + timeNow + ".csv" + seperator);
-			writeCSVTemp("whbm_" + timeNow + ".csv", timeNow);
+			String file = (s == -1 && e == -1) ? "whbm_backup" + timeNow.replaceAll("[ :-]", "_") + ".csv"
+					: "whbm_" + timeNow.replaceAll("[ :-]", "_") + ".csv";
+			alreadyExists = new File(file).exists();
+			logger.info("Warning: csvFile " + csvFile + " in use. Save to " + file + seperator);
+			try {
+				csvOutput = new CsvWriter(new FileWriter(file, true), ',');
+				if (!alreadyExists)
+					csvOutput.writeRecord(new String[] { "timeStamp", "styleid", "name", "rating", "reviewCount",
+							"priceNow", "priceWas", "size", "inventory" });
+				// write records
+				for (int i = 0; i < inventory.size(); i++) {
+					csvOutput.write(timeNow);
+					csvOutput.write(styleid.get(i));
+					csvOutput.write(name.get(i));
+					csvOutput.write(rating.get(i));
+					csvOutput.write(reviewCount.get(i));
+					csvOutput.write(regularPrice.get(i));
+					csvOutput.write(salesPrice.get(i));
+					csvOutput.write(size.get(i));
+					csvOutput.write(inventory.get(i));
+					csvOutput.endRecord();
+				}
+				if (s == -1 && e == -1)
+					logger.info("Successfully write temp file (from " + timeNow + ") " + productLink.size() + " items ("
+							+ styleid.size() + " records) to " + file  + seperator);
+				csvOutput.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
-
-	public static void writeCSVTemp(String file, String timeNow) {
-
-		file = file.replaceAll("\\s", "_").replaceAll("[ :-]", "_");
-		boolean alreadyExists = new File(file).exists();
-		try {
-			CsvWriter csvOutput = new CsvWriter(new FileWriter(file, true), ',');
-
-			// write header
-			if (!alreadyExists) {
-				csvOutput.writeRecord(new String[] { "timeStamp", "styleid", "name", "rating", "reviewCount",
-						"priceNow", "priceWas", "size", "inventory" });
-			}
-			if (inventory.size() != styleid.size()) {
-				System.out.println(
-						timeNow + "Size mismatched: inventory(" + inventory.size() + ") id(" + styleid.size() + ")");
-			}
-			// write records
-			for (int i = 0; i < inventory.size(); i++) {
-				csvOutput.write(timeNow);
-				csvOutput.write(styleid.get(i));
-				csvOutput.write(name.get(i));
-				csvOutput.write(rating.get(i));
-				csvOutput.write(reviewCount.get(i));
-				csvOutput.write(regularPrice.get(i));
-				csvOutput.write(salesPrice.get(i));
-				csvOutput.write(size.get(i));
-				csvOutput.write(inventory.get(i));
-				csvOutput.endRecord();
-			}
-			logger.info("Successfully write temp file (from " + timeNow + ") " + productLink.size() + " items ("
-					+ styleid.size() + " records) to " + csvFile + "\n\n" + seperator + seperator + seperator);
-			csvOutput.close();
-		} catch (IOException e) {
-			logger.info(e.getMessage() + seperator);
-		}
-	}
-
-	// private static void writeLog(String msg) {
-	// try {
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 }
