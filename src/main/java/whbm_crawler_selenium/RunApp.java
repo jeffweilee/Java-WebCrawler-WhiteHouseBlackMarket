@@ -129,11 +129,24 @@ public class RunApp {
 		wait = new WebDriverWait(chromeDriver, 20);
 	}
 
+	public static int indexInProcessExcpetion = 0;
+	public static int countInProcessExcpetion = 0;
+
 	public static void processException(Exception e, String from, int index) {
 		e.printStackTrace();
 		String err = e.toString();
 		System.out.println(err);
 		String msg = from + ": ";
+
+		if (index != indexInProcessExcpetion) {
+			indexInProcessExcpetion = index;
+			countInProcessExcpetion = 0;
+		} else {
+			++countInProcessExcpetion;
+			if (countInProcessExcpetion > 3)
+				setUp();
+		}
+
 		try {
 			if (index != -1 && productLink.size() > index) {
 				if (from == "GetProductList")
@@ -161,10 +174,12 @@ public class RunApp {
 					|| err.contains("TimeoutException")) {
 				if (from.equals("SubmitBag")) {
 					logger.info("Redirect Page " + index + ": " + productLink.get(index) + " because ");
+					chromeDriver.get(productLink.get(index));
 				} else {
 					logger.info(msg + newline);
 					logger.info(err + newline);
 					logger.info("Redirect Page " + index + ": " + productLink.get(index) + seperator);
+					chromeDriver.get(productLink.get(index));
 				}
 				if (from == "GetInventory" || from == "FetchClothesLikeProduct" || from == "FetchGadgetLikeProduct") {
 					chromeDriver.get(productLink.get(index));
@@ -621,8 +636,8 @@ public class RunApp {
 
 			if (s == -1 && e == -1)
 				logger.info("Successfully write (from " + timeNow + ") " + productLink.size() + " items ("
-						+ styleid.size() + " records) to " + csvFile + seperator + seperator + seperator
-						+ seperator + seperator + seperator);
+						+ styleid.size() + " records) to " + csvFile + seperator + seperator + seperator + seperator
+						+ seperator + seperator);
 
 		} catch (IOException x) {
 			// e.printStackTrace();
@@ -650,7 +665,7 @@ public class RunApp {
 				}
 				if (s == -1 && e == -1)
 					logger.info("Successfully write temp file (from " + timeNow + ") " + productLink.size() + " items ("
-							+ styleid.size() + " records) to " + file  + seperator);
+							+ styleid.size() + " records) to " + file + seperator);
 				csvOutput.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
