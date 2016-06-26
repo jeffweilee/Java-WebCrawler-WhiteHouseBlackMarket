@@ -55,7 +55,7 @@ public class RunApp {
 	public static List<String> inventory = new ArrayList<>();
 	public static Select sizeSelector;
 	public static Select qtySelector;
-
+	public static String SKIP = "skip";
 	public static Logger logger;
 	public static FileHandler fh;
 
@@ -132,7 +132,7 @@ public class RunApp {
 	public static int indexInProcessExcpetion = 0;
 	public static int countInProcessExcpetion = 0;
 
-	public static void processException(Exception e, String from, int index) {
+	public static String processException(Exception e, String from, int index) {
 		e.printStackTrace();
 		String err = e.toString();
 		System.out.println(err);
@@ -143,8 +143,11 @@ public class RunApp {
 			countInProcessExcpetion = 0;
 		} else {
 			++countInProcessExcpetion;
-			if (countInProcessExcpetion > 3)
+			if (countInProcessExcpetion > 1) {
 				setUp();
+				if (err.contains("NoSuchElementException"))
+					return SKIP;
+			}
 		}
 
 		try {
@@ -193,13 +196,12 @@ public class RunApp {
 			} else {
 				clearPopup();
 			}
-		} catch (
-
-		Exception e1)
+		} catch (Exception e1)
 
 		{
 			setUp();
 		}
+		return null;
 
 	}
 
@@ -237,9 +239,9 @@ public class RunApp {
 				});
 				msg += link.size() + ", ";
 			} catch (Exception e) {
-				processException(e, "GetProductList", i);
+				if(processException(e, "GetProductList", i)!=SKIP)
+					i--;
 				logger.info("GetProductList: " + productList.get(i) + seperator);
-				i--;
 			}
 		}
 		Set<String> hs = new HashSet<>();
@@ -328,9 +330,9 @@ public class RunApp {
 					}
 				}
 			} catch (Exception e) {
-				processException(e, "GetDetail", i);
+				if(processException(e, "GetDetail", i)!=SKIP)
+					i--;
 				flagRerun = true;
-				i--;
 			}
 		}
 	}
@@ -375,7 +377,6 @@ public class RunApp {
 				else {
 					checkCurrency("USD");
 					String s = sizeList.get(j);
-
 					// refresh page to get correct inventory without #zone-error
 					if (!inventoryNow.isEmpty() && !inventoryNow.get(j - 1).equals("20+"))
 						chromeDriver.navigate().refresh();
@@ -403,8 +404,8 @@ public class RunApp {
 					}
 				}
 			} catch (Exception e) {
-				processException(e, "FetchClothesLikeProduct", i);
-				j--;
+				if (processException(e, "FetchClothesLikeProduct", i) != SKIP)
+					j--;
 			}
 		}
 
@@ -449,8 +450,8 @@ public class RunApp {
 					}
 				}
 			} catch (Exception e) {
-				processException(e, "FetchGadgetLikeProduct", i);
-				j--;
+				if (processException(e, "FetchClothesLikeProduct", i) != SKIP)
+					j--;
 			}
 		}
 	}

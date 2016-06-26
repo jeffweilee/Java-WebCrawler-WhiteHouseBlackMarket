@@ -1,0 +1,536 @@
+Apr 14, 2016 11:20:58 AM whbm_crawler_selenium.RunApp getProductList
+INFO: Start crawling...
+====================
+Apr 14, 2016 11:21:12 AM whbm_crawler_selenium.RunApp getProductList
+INFO: # of Items:
+[sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: 
+[262]
+====================
+Apr 14, 2016 11:21:12 AM whbm_crawler_selenium.RunApp getProductList
+INFO: # of Total Items: 259
+====================
+Apr 14, 2016 11:21:12 AM whbm_crawler_selenium.RunApp getDetail
+INFO: Start getDetail...
+====================
+Apr 14, 2016 11:22:18 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 0 item completed!
+ [https://www.whitehouseblackmarket.com/store/product/gladiator-sandals/570172452?color=&catId=cat210019&fromSearch=true]
+====================
+Apr 14, 2016 11:22:25 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 0 - 1 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:22:57 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 2 - 3 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:24:13 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 4 - 5 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:25:25 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 6 - 7 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:25:53 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 8 - 9 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:26:22 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 10 - 11 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:28:16 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 12 - 13 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:28:52 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 14 - 15 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:29:23 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 16 - 17 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:30:39 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 18 - 19 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:31:19 AM whbm_crawler_selenium.RunApp processException
+INFO: GetDetail: Item 20
+[https://www.whitehouseblackmarket.com/store/product/pave-sticks-statement-necklace/570172804?color=&catId=cat210019&fromSearch=true]
+
+Apr 14, 2016 11:31:19 AM whbm_crawler_selenium.RunApp processException
+INFO: org.openqa.selenium.TimeoutException: Timed out after 20 seconds waiting for element to no longer be visible: By.cssSelector: .jqmOverlay
+Build info: version: '2.52.0', revision: '4c2593cfc3689a7fcd7be52549167e5ccc93ad28', time: '2016-02-11 11:22:43'
+System info: host: 'Jeff-PC', ip: '192.168.56.1', os.name: 'Windows 8.1', os.arch: 'x86', os.version: '6.3', java.version: '1.8.0_71'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{applicationCacheEnabled=false, rotatable=false, mobileEmulationEnabled=false, chrome={userDataDir=C:\Users\Jeff\AppData\Local\Temp\scoped_dir8020_7313}, takesHeapSnapshot=true, databaseEnabled=false, handlesAlerts=true, hasTouchScreen=false, version=49.0.2623.112, platform=WIN8_1, browserConnectionEnabled=false, nativeEvents=true, acceptSslCerts=true, locationContextEnabled=true, webStorageEnabled=true, browserName=chrome, takesScreenshot=true, javascriptEnabled=true, cssSelectorsEnabled=true}]
+Session ID: 2becc07770ba95ed697170cbe91431e9
+
+Apr 14, 2016 11:31:19 AM whbm_crawler_selenium.RunApp processException
+INFO: Redirect Page 20: https://www.whitehouseblackmarket.com/store/product/pave-sticks-statement-necklace/570172804?color=&catId=cat210019&fromSearch=true
+====================
+Apr 14, 2016 11:31:33 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 20 - 21 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:32:32 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 22 - 23 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:32:52 AM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/beaded-fringe-necklace/570175224?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 11:33:01 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 24 - 25 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:34:19 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 26 - 27 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:35:22 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 28 - 29 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:35:50 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 30 - 31 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:36:18 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 32 - 33 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:36:45 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 34 - 35 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:37:33 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 36 - 37 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:38:59 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 38 - 39 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:39:27 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 40 - 41 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:40:02 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 42 - 43 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:41:48 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 44 - 45 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:43:04 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 46 - 47 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:43:39 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 48 - 49 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:44:07 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 50 - 51 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:44:59 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 52 - 53 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:45:27 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 54 - 55 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:45:57 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 56 - 57 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:47:00 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 58 - 59 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:48:27 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 60 - 61 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:48:58 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 62 - 63 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:49:18 AM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/angular-short-statement-necklace/570178169?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 11:49:28 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 64 - 65 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:49:57 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 66 - 67 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:50:37 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 68 - 69 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:51:17 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 70 - 71 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:51:49 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 72 - 73 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:52:11 AM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/mixed-goldtone-friendship-bracelet/570175110?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 11:53:06 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 74 - 75 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:54:24 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 76 - 77 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:54:51 AM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/shell-collar-necklace/570175171?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 11:54:53 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 78 - 79 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:56:05 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 80 - 81 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:57:10 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 82 - 83 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:58:05 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 84 - 85 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:58:25 AM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/jet-stone-doublestrand-convertible-necklace/570175154?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 11:58:33 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 86 - 87 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:59:01 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 88 - 89 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:59:28 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 90 - 91 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 11:59:56 AM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 92 - 93 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:01:02 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 94 - 95 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:02:39 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 96 - 97 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:03:06 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 98 - 99 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:03:53 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 100 item completed!
+ [https://www.whitehouseblackmarket.com/store/product/braided-leather-belt/570173024?color=&catId=cat210019&fromSearch=true]
+====================
+Apr 14, 2016 12:04:00 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 100 - 101 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:04:45 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 102 - 103 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:05:45 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 104 - 105 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:06:15 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 106 - 107 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:07:09 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 108 - 109 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:07:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 110 - 111 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:09:07 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 112 - 113 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:09:36 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 114 - 115 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:10:14 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 116 - 117 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:11:32 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 118 - 119 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:11:59 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 120 - 121 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:12:40 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 122 - 123 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:13:25 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 124 - 125 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:13:54 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 126 - 127 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:14:26 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 128 - 129 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:14:56 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 130 - 131 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:15:34 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 132 - 133 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:16:07 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 134 - 135 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:16:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 136 - 137 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:17:07 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 138 - 139 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:17:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 140 - 141 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:18:06 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 142 - 143 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:18:33 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 144 - 145 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:18:59 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 146 - 147 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:19:28 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 148 - 149 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:20:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 150 - 151 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:21:08 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 152 - 153 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:21:43 PM whbm_crawler_selenium.RunApp processException
+INFO: GetDetail: Item 154
+[https://www.whitehouseblackmarket.com/store/product/sodalite-asymmetric-open-cuff/570166841?color=&catId=cat210019&fromSearch=true]
+
+Apr 14, 2016 12:21:43 PM whbm_crawler_selenium.RunApp processException
+INFO: org.openqa.selenium.TimeoutException: Timed out after 20 seconds waiting for element to no longer be visible: By.cssSelector: .jqmOverlay
+Build info: version: '2.52.0', revision: '4c2593cfc3689a7fcd7be52549167e5ccc93ad28', time: '2016-02-11 11:22:43'
+System info: host: 'Jeff-PC', ip: '192.168.56.1', os.name: 'Windows 8.1', os.arch: 'x86', os.version: '6.3', java.version: '1.8.0_71'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{applicationCacheEnabled=false, rotatable=false, mobileEmulationEnabled=false, chrome={userDataDir=C:\Users\Jeff\AppData\Local\Temp\scoped_dir8020_7313}, takesHeapSnapshot=true, databaseEnabled=false, handlesAlerts=true, hasTouchScreen=false, version=49.0.2623.112, platform=WIN8_1, browserConnectionEnabled=false, nativeEvents=true, acceptSslCerts=true, locationContextEnabled=true, webStorageEnabled=true, browserName=chrome, takesScreenshot=true, javascriptEnabled=true, cssSelectorsEnabled=true}]
+Session ID: 2becc07770ba95ed697170cbe91431e9
+
+Apr 14, 2016 12:21:43 PM whbm_crawler_selenium.RunApp processException
+INFO: Redirect Page 154: https://www.whitehouseblackmarket.com/store/product/sodalite-asymmetric-open-cuff/570166841?color=&catId=cat210019&fromSearch=true
+====================
+Apr 14, 2016 12:21:58 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 154 - 155 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:22:23 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 156 - 157 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:22:42 PM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/shell-lock-pendant-necklace/570175173?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 12:22:51 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 158 - 159 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:23:43 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 160 - 161 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:24:15 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 162 - 163 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:25:10 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 164 - 165 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:25:49 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 166 - 167 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:27:06 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 168 - 169 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:27:41 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 170 - 171 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:28:14 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 172 - 173 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:28:47 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 174 - 175 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:29:20 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 176 - 177 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:29:55 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 178 - 179 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:31:11 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 180 - 181 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:32:41 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 182 - 183 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:33:18 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 184 - 185 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:34:31 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 186 - 187 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:35:00 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 188 - 189 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:35:32 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 190 - 191 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:36:04 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 192 - 193 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:36:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 194 - 195 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:37:06 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 196 - 197 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:37:49 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 198 - 199 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:38:58 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 200 item completed!
+ [https://www.whitehouseblackmarket.com/store/product/slide-wedge-sandals/570171564?color=&catId=cat210019&fromSearch=true]
+====================
+Apr 14, 2016 12:39:06 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 200 - 201 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:39:41 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 202 - 203 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:40:07 PM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/howlite-open-cuff/570166905?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 12:40:18 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 204 - 205 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:40:51 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 206 - 207 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:41:21 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 208 - 209 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:41:46 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 210 - 211 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:42:11 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 212 - 213 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:42:39 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 214 - 215 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:43:08 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 216 - 217 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:44:10 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 218 - 219 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:44:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 220 - 221 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:45:27 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 222 - 223 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:45:46 PM whbm_crawler_selenium.RunApp fetchClothesLikeProduct
+INFO: Timeout item 224 size(XXS)
+https://www.whitehouseblackmarket.com/store/product/leather-wide-buckled-belt/570173038?color=&catId=cat210019&fromSearch=true
+====================
+Apr 14, 2016 12:46:08 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 224 - 225 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:46:35 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 226 - 227 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:47:38 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 228 - 229 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:48:05 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 230 - 231 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:49:19 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 232 - 233 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:50:05 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 234 - 235 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:51:22 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 236 - 237 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:52:30 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 238 - 239 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:52:57 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 240 - 241 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:53:41 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 242 - 243 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:54:46 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 244 - 245 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:55:14 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 246 - 247 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:55:33 PM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/sodalite-beaded-stretch-bracelets/570165434?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 12:55:42 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 248 - 249 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:56:24 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 250 - 251 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:56:50 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 252 - 253 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:57:10 PM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/red-jasper-cutout-cuff/570175302?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 12:57:19 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 254 - 255 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:57:39 PM whbm_crawler_selenium.RunApp fetchGadgetLikeProduct
+INFO: Timeout item: id(https://www.whitehouseblackmarket.com/store/product/jet-square-doubledrop-necklace/570177358?color=&catId=cat210019&fromSearch=true) size(NA)
+====================
+Apr 14, 2016 12:58:15 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No.  - 257 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:58:36 PM whbm_crawler_selenium.RunApp getDetail
+INFO: No. 257 - 258 item wrtite to whbm.csv successfully!
+====================
+Apr 14, 2016 12:58:51 PM whbm_crawler_selenium.RunApp writeCSV
+INFO: Successfully write (from 2016-04-14T11:20:10.018) 259 items (694 records) to whbm.csv
+
+====================
+====================
+====================
+====================
+====================
+====================
+Apr 15, 2016 6:33:25 PM whbm_crawler_selenium.RunApp getProductList
+INFO: Start crawling...
+====================
+Apr 21, 2016 9:04:13 PM whbm_crawler_selenium.RunApp getProductList
+INFO: Start crawling...
+====================
+Apr 21, 2016 9:04:31 PM whbm_crawler_selenium.RunApp getProductList
+INFO: # of Items:
+[sale, accessory, jeans, jackets, tops, skirts, petty, work, new arrival]: 
+[259]
+====================
+Apr 21, 2016 9:04:31 PM whbm_crawler_selenium.RunApp getProductList
+INFO: # of Total Items: 257
+====================
+Apr 21, 2016 9:04:31 PM whbm_crawler_selenium.RunApp getDetail
+INFO: Start getDetail...
+====================
+Apr 21, 2016 9:06:05 PM whbm_crawler_selenium.RunApp processException
+INFO: FetchClothesLikeProduct: Item 0
+[https://www.whitehouseblackmarket.com/store/product/gladiator-sandals/570172452?color=&catId=cat210019&fromSearch=true]
+
+Apr 21, 2016 9:06:05 PM whbm_crawler_selenium.RunApp processException
+INFO: org.openqa.selenium.NoSuchElementException: Cannot locate element with text: 1000
+For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '2.52.0', revision: '4c2593cfc3689a7fcd7be52549167e5ccc93ad28', time: '2016-02-11 11:22:43'
+System info: host: 'Jeff-PC', ip: '192.168.56.1', os.name: 'Windows 8.1', os.arch: 'x86', os.version: '6.3', java.version: '1.8.0_71'
+Driver info: driver.version: unknown
+====================
+Apr 21, 2016 9:07:08 PM whbm_crawler_selenium.RunApp processException
+INFO: FetchClothesLikeProduct: Item 0
+[https://www.whitehouseblackmarket.com/store/product/gladiator-sandals/570172452?color=&catId=cat210019&fromSearch=true]
+
+Apr 21, 2016 9:07:08 PM whbm_crawler_selenium.RunApp processException
+INFO: org.openqa.selenium.NoSuchElementException: Cannot locate element with text: 1000
+For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '2.52.0', revision: '4c2593cfc3689a7fcd7be52549167e5ccc93ad28', time: '2016-02-11 11:22:43'
+System info: host: 'Jeff-PC', ip: '192.168.56.1', os.name: 'Windows 8.1', os.arch: 'x86', os.version: '6.3', java.version: '1.8.0_71'
+Driver info: driver.version: unknown
+====================
+Apr 21, 2016 9:08:29 PM whbm_crawler_selenium.RunApp checkProductUrl
+INFO: URL error!
+Current: https://www.whitehouseblackmarket.com/store/product/gladiator-sandals/570172452?color=&catId=cat210019&fromSearch=true
+Expect : https://www.whitehouseblackmarket.com/store/product/gladiator-sandals/570172452?color=&catId=cat210019&fromSearch=true
+====================
+May 11, 2016 2:53:25 PM whbm_crawler_selenium.RunApp getProductList
+INFO: Start crawling...
+====================
