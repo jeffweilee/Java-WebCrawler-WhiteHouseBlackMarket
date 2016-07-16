@@ -209,14 +209,14 @@ public class RunApp {
 		logger.info("Start crawling..." + seperator);
 		List<String> productList = new ArrayList<>();
 		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
-//		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
+		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
 
 		String msg = "[";
 		for (int i = 0; i < productList.size(); i++) {
