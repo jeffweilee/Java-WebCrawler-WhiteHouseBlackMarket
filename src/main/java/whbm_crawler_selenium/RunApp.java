@@ -209,14 +209,14 @@ public class RunApp {
 		logger.info("Start crawling..." + seperator);
 		List<String> productList = new ArrayList<>();
 		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
 
 		String msg = "[";
 		for (int i = 0; i < productList.size(); i++) {
@@ -264,7 +264,7 @@ public class RunApp {
 	private static void getDetail() {
 		logger.info("Start getDetail..." + seperator);
 		Boolean flagRerun = false;
-		int writeFreq = 20;
+		int writeFreq = 2;
 		int lastWriteIndex = 0;
 		for (int i = 0; i <= productLink.size(); i++) {
 			try {
@@ -290,7 +290,7 @@ public class RunApp {
 					List<WebElement> salPrice = chromeDriver.findElements(By.cssSelector(
 							"#frmAddToBag > div.fieldset-wrapper > fieldset.product-fieldset.fieldset0 > div.product-price-wrapper > div > span.sale-price"));
 					List<WebElement> BVRRRatingNumber = chromeDriver
-							.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/div[3]/span[1]"));
+							.findElements(By.xpath("//*[@id='BVRRRatingOverall_Rating_Summary_1']/span/span[1]"));
 					List<WebElement> BVRRReviewCount = chromeDriver.findElements(By.xpath("//*[@id='tab_numReviews']"));
 					Boolean isOutOfStock = false;
 					if (!checkProductUrl(i))
@@ -356,6 +356,37 @@ public class RunApp {
 			}
 		}
 	}
+	
+//	public static void getComment() {
+//		List<WebElement> cmtRating = chromeDriver.findElements(By.cssSelector("#BVRRRatingOverall_Review_Display > div.BVRRRatingNormalOutOf > span.BVRRNumber.BVRRRatingNumber"));
+//		List<WebElement> cmtName = chromeDriver.findElements(By.cssSelector("span.BVRRNickname"));
+//		//all the nodes of profile is under this parent node div.BVRRContextDataContainer
+//		//By.cssSelector("#BVSubmissionPopupContainer > div.BVRRReviewDisplayStyle3Summary > div.BVRRContextDataContainer")
+//				
+//		List<WebElement> cmtAge = chromeDriver.findElements(By.cssSelector("span.BVRRContextDataValueAge"));
+//		List<WebElement> cmtBodyType = chromeDriver.findElements(By.cssSelector("span.BVRRContextDataValueBodyType"));
+//		List<WebElement> cmtShoppingFrequency = chromeDriver
+//				.findElements(By.cssSelector("span.BVRRContextDataValueShoppingFrequency"));
+//		List<WebElement> cmtTitle = chromeDriver.findElements(By.cssSelector("span.BVRRReviewTitle"));
+//		List<WebElement> cmtDate = chromeDriver.findElements(By.cssSelector("span.BVRRReviewDate"));
+//		List<WebElement> cmtContent = chromeDriver.findElements(By.cssSelector("span.BVRRReviewText"));
+//		List<WebElement> cmtHelpfulYes = chromeDriver.findElements(By.cssSelector("#BVSubmissionPopupContainer > div.BVRRReviewDisplayStyle3Main > div.BVDI_FV > div.BVDI_FVVoting.BVDI_FVVotingHelpfulness > div.BVDI_FVVotes.BVDI_FVVotesHelpfulness > span.BVDI_FVVote.BVDI_FVPositive > a > span > span.BVDINumber"));
+//		List<WebElement> cmtHelpfulNo = chromeDriver.findElements(By.cssSelector("#BVSubmissionPopupContainer > div.BVRRReviewDisplayStyle3Main > div.BVDI_FV > div.BVDI_FVVoting.BVDI_FVVotingHelpfulness > div.BVDI_FVVotes.BVDI_FVVotesHelpfulness > span.BVDI_FVVote.BVDI_FVNegative > a > span > span.BVDINumber"));
+//		
+//		for(int i = 0 ; i<cmtRating.size(); i++){
+//		String cmtRatingNow = cmtRating.get(i).getAttribute("innerText");
+//		String cmtNameNow = cmtName.get(i).getText();
+//		String cmtAgeNow = cmtAge.get(i).getText();
+//		String cmtBodyTypeNow = cmtBodyType.get(i).getText();
+//		String cmtShoppingFrequencyNow = cmtShoppingFrequency.get(0).getText();
+//		String cmtTitleNow = "\""+cmtTitle.get(i).getText()+"\"";
+//		String cmtDateNow = cmtDate.get(i).getText();
+//		String cmtContentNow = "\""+cmtContent.get(i).getAttribute("innerText")+"\"";
+//		String cmtYesNow= cmtHelpfulYes.get(i).getText();
+//		String cmtNoNow= cmtHelpfulNo.get(i).getText();
+//		System.out.println(cmtRatingNow + ", "+cmtNameNow+ ", "+cmtAgeNow+ ", "+cmtBodyTypeNow+ ", "+cmtShoppingFrequencyNow+ ", "+cmtTitleNow+ ", "+cmtDateNow+ ", "+cmtContentNow+", "+cmtYesNow+ ", "+cmtNoNow);
+//		}
+//	}
 
 	public static void fetchClothesLikeProduct(int i) {
 		List<String> inventoryNow = new ArrayList<String>();
