@@ -165,15 +165,11 @@ public class RunApp {
 				logger.info(msg + newline);
 				logger.info(err + seperator);
 				setUp();
-			} else if (err.contains("NoSuchElementException")) {
+			} else if (err.contains("NoSuchElementException") || err.contains("alert") || err.contains("WebDriverException") || err.contains("status")) {
 				logger.info(msg + newline);
 				logger.info(err + seperator);
 				clearAlert();
-			} else if (err.contains("alert")) {
-				logger.info(msg + newline);
-				logger.info(err + seperator);
-				clearAlert();
-			} else if (index != -1 && !chromeDriver.getCurrentUrl().equals(productLink.get(index))
+			}  else if (index != -1 && !chromeDriver.getCurrentUrl().equals(productLink.get(index))
 					|| err.contains("TimeoutException")) {
 				if (from.equals("SubmitBag")) {
 					logger.info("Redirect Page " + index + ": " + productLink.get(index) + " because ");
@@ -195,6 +191,7 @@ public class RunApp {
 				}
 			} else {
 				clearPopup();
+				clearAlert();
 			}
 		} catch (Exception e1)
 
@@ -210,13 +207,13 @@ public class RunApp {
 		List<String> productList = new ArrayList<>();
 		productList.add("https://www.whitehouseblackmarket.com/store/sale/catsales");
 		productList.add("https://www.whitehouseblackmarket.com/store/category/jewelry-accessories/cat210019");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
-		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/all-jeans/cat210023");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/jackets-vests/cat210004");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/tops/cat210001");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/dresses-skirts/cat210002");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/petites/cat8739284");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/work/cat6219285");
+//		productList.add("https://www.whitehouseblackmarket.com/store/category/new-arrivals/cat210006");
 
 		String msg = "[";
 		for (int i = 0; i < productList.size(); i++) {
@@ -319,7 +316,7 @@ public class RunApp {
 							salesPrice.add(sPrice);
 							rating.add(ratingNow);
 							reviewCount.add(reviewCountNow);
-
+//System.out.println(idNow + ", " + ratingNow);
 							getInventory(i);
 						} else {
 							logger.info(
@@ -339,7 +336,7 @@ public class RunApp {
 
 	public static void getInventory(int i) {
 		List<WebElement> sizeSelectorList = chromeDriver
-				.findElements(By.cssSelector("#product-options > div:nth-child(2) > select"));
+				.findElements(By.cssSelector("div.product-options > div:nth-child(2) > select"));
 		List<WebElement> qtySelectorList = chromeDriver.findElements(By.cssSelector("#skuQty1"));
 		if (!checkProductUrl(i))
 			getInventory(i);
@@ -347,7 +344,9 @@ public class RunApp {
 			if (!sizeSelectorList.isEmpty() && !qtySelectorList.isEmpty() && sizeSelectorList.get(0).isDisplayed()
 					&& qtySelectorList.get(0).isDisplayed()) {
 				fetchClothesLikeProduct(i);
-			} else if (!qtySelectorList.isEmpty() && qtySelectorList.get(0).isDisplayed()
+			}else if(sizeSelectorList.isEmpty()){
+				fetchGadgetLikeProduct(i);
+			}else if (!qtySelectorList.isEmpty() && qtySelectorList.get(0).isDisplayed()
 					&& !sizeSelectorList.get(0).isDisplayed()) {
 				fetchGadgetLikeProduct(i);
 			} else { /*** out of stock ***/
@@ -389,11 +388,11 @@ public class RunApp {
 //	}
 
 	public static void fetchClothesLikeProduct(int i) {
-		List<String> inventoryNow = new ArrayList<String>();
+ 		List<String> inventoryNow = new ArrayList<String>();
 		List<String> sizeNow = new ArrayList<String>();
 		List<String> sizeList = new ArrayList<String>();
 		sizeSelector = new Select(
-				chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
+				chromeDriver.findElement(By.cssSelector("div.product-options > div:nth-child(2) > select")));
 		sizeSelector.getOptions().forEach(item -> {
 			sizeList.add(item.getText());
 		});
@@ -413,11 +412,11 @@ public class RunApp {
 						chromeDriver.navigate().refresh();
 
 					wait.until(ExpectedConditions
-							.presenceOfElementLocated(By.cssSelector("#product-options > div:nth-child(2) > select")));
+							.presenceOfElementLocated(By.cssSelector("div.product-options > div:nth-child(2) > select")));
 					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#skuQty1")));
 
 					sizeSelector = new Select(
-							chromeDriver.findElement(By.cssSelector("#product-options > div:nth-child(2) > select")));
+							chromeDriver.findElement(By.cssSelector("div.product-options > div:nth-child(2) > select")));
 					qtySelector = new Select(chromeDriver.findElement(By.cssSelector("#skuQty1")));
 
 					sizeSelector.selectByVisibleText(s);
@@ -600,6 +599,21 @@ public class RunApp {
 			wait.until(ExpectedConditions.elementToBeClickable(closePopupBtn_shippment.get(0)));
 			closePopupBtn_shippment.get(0).click();
 		}
+		
+		List<WebElement> closePopupBtn_discount = chromeDriver.findElements(By.cssSelector(".modalclose"));
+		if (!closePopupBtn_discount.isEmpty()) {
+			wait.until(ExpectedConditions.elementToBeClickable(closePopupBtn_discount.get(0)));
+			closePopupBtn_shippment.get(0).click();
+		}
+		
+//		List<WebElement> closePopupBtn_a = chromeDriver.findElements(By.cssSelector("a"));
+//		if (!closePopupBtn_a.isEmpty()) {
+//			for (WebElement webElement : closePopupBtn_a) {
+//				wait.until(ExpectedConditions.elementToBeClickable(webElement));
+//				webElement.click();
+//			}
+//			
+//		}
 
 		List<WebElement> closePopupBtn_giftCard = chromeDriver
 				.findElements(By.cssSelector("#jModal > table > tbody > tr.modalControls > td:nth-child(2) > a"));
